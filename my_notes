@@ -1,0 +1,57 @@
+
+Reference: https://docs.saltstack.com/en/latest/contents.html 
+
+Digital business is complex. Humans alone can’t keep it optimized, reliable and secure.
+
+Let’s automate IT.
+
+
+
+Understanding the Salt architecture
+
+Getting familiar with Salt
+
+Managing network configurations with Salt
+
+Executing Salt functions remotely
+
+Diving into Salt’s event-driven infrastructure
+
+Diving into Salt a bit further
+
+==================================================================================================
+
+#Here is a very basic SLS file that can be written as a pure YAML data file:
+
+ntp_peers:
+  - 10.10.10.1
+  - 10.10.10.2
+  - 10.10.10.3
+
+#You can add a Jinja for loop inside the same file to make it more dynamic:
+
+ntp_peers:
+  {%- for peer_id in range(1, 4) %}
+  - 10.10.10.{{ peer_id }}
+  {%- endfor %}
+
+
+
+==================================================================================================
+
+#The following is an example pillar file using the SLS file format:
+
+proxy:
+  proxytype: napalm
+  driver: nxos
+  fqdn: nxos-spine1.dc.amers
+  username: ntc
+  password: ntc123
+hostname: nxos-spine1
+openconfig-bgp:
+  bgp:
+    global:
+      config:
+        as: 65001
+        router_id: 172.17.17.1
+
