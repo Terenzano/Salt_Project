@@ -1,9 +1,9 @@
 
 Reference: https://docs.saltstack.com/en/latest/contents.html 
 
-Digital business is complex. Humans alone can’t keep it optimized, reliable and secure.
+"Digital business is complex. Humans alone can’t keep it optimized, reliable and secure.
 
-Let’s automate IT.
+Let’s automate IT."
 
 
 
@@ -36,10 +36,18 @@ ntp_peers:
   {%- endfor %}
 
 
+#You can also create SLS data files in pure Python. Here is another example that represents the same data:
+
+#!py
+def run():
+    return [
+      '10.0.10.{}'.format(peer_id) for peer_id in range(1, 4)
+    ]
+
 
 ==================================================================================================
 
-#The following is an example pillar file using the SLS file format:
+#The following is an example pillar (nxos_spine1_pillar.sls) file using the SLS file format:
 
 proxy:
   proxytype: napalm
@@ -54,4 +62,35 @@ openconfig-bgp:
       config:
         as: 65001
         router_id: 172.17.17.1
+
+==================================================================================================
+
+#Here is a basic example of a top file that uses exact matches based on the minion ID and matches each device to a pillar data file.
+
+base:
+  csr1:  # minion id
+    - csr1_pillar  # pillar mapped to csr1
+  vmx1:
+    - vmx1_pillar
+  nxos-spine1:
+    - nxos_spine1_pillar
+  eos-spine1:
+    - eos_spine1_pillar
+
+In this basic example, the minion with the ID nxos-spine1 uses the nxos_spine1_pillar.sls pillar.
+
+
+==================================================================================================
+
+
+The following example maps pillars to devices using characteristics about a device, called Salt grains, including vendor and OS version:
+
+base:
+  'G@vendor:juniper':
+    - junos
+  'G@os:ios and G@version:16*'
+    - ios_16
+  'E@(.*)-spine(\d)':
+    - spine
+
 
